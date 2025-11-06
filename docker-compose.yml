@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  ana-bot:
+    build: .
+    container_name: ana-bot
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Lisbon
+      - OWNER_NUMBER=${OWNER_NUMBER}
+      - MORNING_DIGEST_HOUR=${MORNING_DIGEST_HOUR:-8}
+      - MORNING_DIGEST_MINUTE=${MORNING_DIGEST_MINUTE:-0}
+      - PORT=3000
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    volumes:
+      - ./data:/app/data
+      - ./.wwebjs_auth:/app/.wwebjs_auth
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
